@@ -28,6 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<springdoc.version>2.0.2</springdoc.version>
+		<openapitools.plugin.version>7.12.0</openapitools.plugin.version>
+		<jackson.nullable.version>0.2.6</jackson.nullable.version>
+		<hibernate.validator.version>8.0.2.Final</hibernate.validator.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -37,6 +41,24 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>${jackson.nullable.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
 		</dependency>
 
 		<dependency>
@@ -51,6 +73,46 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!--OpenAPI generator plugin to generate Models and APIs from open API spec-->
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>${openapitools.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>java-models</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/openapi-spec-v3.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<modelPackage>com.github.gayanch.library.model</modelPackage>
+							<apiPackage>com.github.gayanch.library.api</apiPackage>
+							<generateApis>true</generateApis>
+							<generateModels>true</generateModels>
+							<generateModelDocumentation>true</generateModelDocumentation>
+							<generateModelTests>false</generateModelTests>
+							<generateSupportingFiles>true</generateSupportingFiles>
+							<library>spring-boot</library>
+							<configOptions>
+								<sourceFolder>src/main/java</sourceFolder>
+								<dateLibrary>java8</dateLibrary>
+								<legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
+								<useJakartaEe>true</useJakartaEe>
+								<useBeanValidation>true</useBeanValidation>
+								<performBeanValidation>true</performBeanValidation>
+								<useSpringBoot3>true</useSpringBoot3>
+								<useOneOfDiscriminatorLookup>true</useOneOfDiscriminatorLookup>
+								<serializationLibrary>jackson</serializationLibrary>
+								<interfaceOnly>true</interfaceOnly>
+								<requestMappingMode>none</requestMappingMode>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

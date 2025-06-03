@@ -1,0 +1,268 @@
+openapi: 3.0.3
+info:
+  title: Library Management System API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /borrowers:
+    get:
+      summary: Get all Borrowers
+      operationId: getAllBorrowers
+      tags:
+        - Borrower
+      responses:
+        '200':
+          description: Borrowers returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Borrower'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a new Borrower
+      operationId: createBorrower
+      tags:
+        - Borrower
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBorrower'
+      responses:
+        '201':
+          description: Borrower created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrower'
+        '400':
+          description: Data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /books:
+    get:
+      summary: Get all Books
+      operationId: getAllBooks
+      tags:
+        - Book
+      responses:
+        '200':
+          description: Books returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Register a new Book
+      operationId: registerBook
+      tags:
+        - Book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBook'
+      responses:
+        '201':
+          description: Book registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /books/{id}/borrower:
+    parameters:
+      - in: path
+        name: id
+        description: The Book id
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Borrow a book
+      operationId: borrowBook
+      tags:
+        - Book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorrowBook'
+      responses:
+        '200':
+          description: Book borrowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Return a borrowed book
+      operationId: returnBook
+      tags:
+        - Book
+      responses:
+        '204':
+          description: Book borrowed
+        '400':
+          description: Data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Borrower:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique borrower id
+        name:
+          type: string
+          description: Borrower's name
+        email:
+          type: string
+          format: email
+          description: Borrower's email
+      required:
+        - id
+        - name
+        - email
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique book id
+        isbn:
+          type: string
+          description: The ISBN number
+        title:
+          type: string
+          description: Book title
+        author:
+          type: string
+          description: Author name
+        borrower:
+          $ref: '#/components/schemas/Borrower'
+      required:
+        - id
+        - isbn
+        - title
+        - author
+
+    CreateBorrower:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Borrower's name
+        email:
+          type: string
+          format: email
+          description: Borrower's email
+      required:
+        - name
+        - email
+
+    RegisterBook:
+      type: object
+      properties:
+        isbn:
+          type: string
+          description: The ISBN number
+        title:
+          type: string
+          description: Book title
+        author:
+          type: string
+          description: Author name
+      required:
+        - isbn
+        - title
+        - author
+
+    BorrowBook:
+      type: object
+      properties:
+        borrowerId:
+          type: string
+          description: Id of the Borrower
+      required:
+        - borrowerId
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
