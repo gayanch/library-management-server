@@ -10,15 +10,34 @@
 mvn clean package
 ```
 
+### Docker build
+```shell
+docker build . -t libraryapp:latest
+```
+
 ## Run
+### Standalone
 1. Update the `application-{profile}.yaml` file to match your development setup:
     - Update the MongoDB URI.
 2. Copy the configuration YAML files to the `target` directory, or provide the paths to the config files using the command-line argument:  
    `--spring.config.location=<path1,path2,...>`
 3. Start the application:
+
 ```shell
 cd target
 java -jar library-management-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+### Docker
+```shell
+docker run -d -p 8080:8080 --name libraryapp -e SPRING_PROFILES_ACTIVE=dev libraryapp:latest
+```
+
+### Kubernetes
+- Manifests are in `k8s` directory
+```shell
+kubectl apply -f mongo-db-deployment.yaml
+kubectl apply -f app-deployment.yaml
 ```
 
 ## Project Structure
@@ -30,3 +49,4 @@ java -jar library-management-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=
 - Start the application.
 - Open the embedded Swagger UI, which documents the available APIs and provides an interactive API test client:  
   [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- Alternatively, you can import the Open API spec into Postman if needed.

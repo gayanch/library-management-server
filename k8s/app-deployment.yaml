@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: library-management-server
+  labels:
+    app: library-management-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: library-management-server
+  template:
+    metadata:
+      labels:
+        app: library-management-server
+    spec:
+      containers:
+      - name: library-management-server
+        image: your-docker-repo/library-management-server:latest
+        ports:
+        - containerPort: 8080
+        automountServiceAccountToken: false
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "dev"
+        - name: SPRING_DATA_MONGODB_URI
+          value: 'mongodb://root:password@mongodb:27017/library_db'
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: library-management-server
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: library-management-server
