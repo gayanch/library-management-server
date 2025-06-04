@@ -1,7 +1,8 @@
 spring:
-  application:
-    name: library-management-server
   data:
     mongodb:
       uri: 'mongodb://192.168.1.101:27017/library'
       auto-index-creation: true
+
+app:
+  host: http://localhost:8080   #used for creating Location header value on resource creation

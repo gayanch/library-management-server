@@ -6,6 +6,8 @@ import com.github.gayanch.library.error.AppException;
 import com.github.gayanch.library.model.Book;
 import com.github.gayanch.library.model.BorrowBook;
 import com.github.gayanch.library.model.RegisterBook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import java.util.Objects;
 
 @Service
 public class BookService {
+    private static final Logger log = LoggerFactory.getLogger(BookService.class);
+
     private final BookRepository bookRepository;
 
     private final BorrowerService borrowerService;
@@ -30,6 +34,9 @@ public class BookService {
 
         var doc = BookDocument.newBook(registerBook.getIsbn(), registerBook.getTitle(), registerBook.getAuthor());
         var created = bookRepository.save(doc);
+
+        log.info("Book {} - {} registered", created.getId(), created.getTitle());
+
         return BookMapper.documentToDto(created);
     }
 
@@ -57,6 +64,8 @@ public class BookService {
 
         var updatedDoc = bookRepository.save(doc);
 
+        log.info("Book {} - {} was borrowed by the user {} - {}", id, doc.getTitle(), borrower.getName(), borrower.getId());
+
         return BookMapper.documentToDto(updatedDoc);
     }
 
@@ -67,6 +76,8 @@ public class BookService {
         //Remove the borrower from book and save
         doc.setBorrower(null);
         bookRepository.save(doc);
+
+        log.info("Book: {} - {} returned", doc.getTitle(), id);
     }
 
     private void validateBookRegistration(RegisterBook registerBook) {
@@ -76,6 +87,8 @@ public class BookService {
 
         var optionalDoc = bookRepository.findOne(Example.of(query));
         if (optionalDoc.isEmpty()) {
+            log.debug("The library does not have a book with given ISBN {}. Registration can proceed.", registerBook.getIsbn());
+
             //This is ok. It's the first time we are seeing this ISBN.
             return;
         }
