@@ -37,7 +37,7 @@ public class BookController implements BooksApi {
     @Override
     public ResponseEntity<Book> borrowBook(String id, BorrowBook borrowBook) {
         var book = bookService.borrow(id, borrowBook);
-        return ResponseEntity.created(uriService.createUri("books", id, "borrow")).body(book);
+        return ResponseEntity.ok(book);
     }
 
     @Override
