@@ -29,8 +29,8 @@ public class AppErrorHandler {
 
         var message = "%s %s".formatted(ex.getFieldError().getField(), ex.getFieldError().getDefaultMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message));
     }
 
     //Catch all exception handler. Define more specific handlers to override this behavior
